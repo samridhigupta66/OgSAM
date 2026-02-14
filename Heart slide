@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heart Slides</title>
+<style>
+* {margin:0; padding:0; box-sizing:border-box;}
+html, body {width:100%; height:100%; overflow:hidden; font-family:sans-serif;}
+.slide {position:absolute; width:100%; height:100%; display:flex; justify-content:center; align-items:center; flex-direction:column; overflow:hidden; transition: opacity 0.5s ease;}
+.hidden {opacity:0; pointer-events:none;}
+.slide-bg {position:absolute; width:100%; height:100%; display:grid; grid-template-columns: repeat(20, 1fr); grid-template-rows: repeat(9, 1fr); gap: 10px; z-index:0;}
+.bg-heart {font-size:10px; color:pink; display:flex; justify-content:center; align-items:center; user-select:none; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;}
+.center-image {width:150px; height:150px; object-fit:contain; z-index:1; display:none; animation: pop 0.8s ease forwards;}
+@keyframes pop {0% {transform: scale(0);} 100% {transform: scale(1);}}
+.slide3-content {width:100%; height:100%; overflow-y:auto; display:flex; flex-direction:column; align-items:center; padding:20px;}
+.typewriter-text {font-size:20px; font-weight:bold; color:#000; width:90%; max-width:400px; margin-top:20px; overflow-wrap: break-word; white-space: pre-wrap; text-align:left; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;}
+.yours {margin-top:20px; font-size:22px; color:#ff1493; display:none; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;}
+.heart {position:absolute; font-size:30px; color:red; user-select:none; pointer-events:none; transition: all 0.1s linear; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;}
+.text-box {background:pink; color:red; padding:8px 15px; border-radius:10px; font-weight:bold; font-size:20px; text-align:center; margin:5px; z-index:2; user-select:none;}
+.open-box {cursor:pointer;}
+</style>
+</head>
+<body>
+
+<!-- Slide 1 -->
+<div class="slide" id="slide1" style="background-color:#ffe6f0;">
+  <div class="slide-bg" id="slide1-bg"></div>
+  <div class="text-box">HEY LOVE🥹❤</div>
+  <img src="gift.png" class="center-image" id="slide1-image">
+  <div class="text-box open-box" id="slide1-open">open me👻</div>
+</div>
+
+<!-- Slide 2 -->
+<div class="slide hidden" id="slide2" style="background-color:#000;">
+  <div class="slide-bg" id="slide2-bg"></div>
+  <img src="letter.png" class="center-image" id="slide2-image">
+  <div class="text-box open-box" id="slide2-open">open me👻</div>
+</div>
+
+<!-- Slide 3 -->
+<div class="slide hidden" id="slide3">
+  <div class="slide3-content">
+    <div class="typewriter-text" id="typewriter"></div>
+    <div class="yours" id="slide3-sign"></div>
+  </div>
+</div>
+
+<script>
+function getQueryParams() {
+  const params = {};
+  const queryString = window.location.search.substring(1);
+  queryString.split("&").forEach(part=>{
+    const [key,value] = part.split("=");
+    if(key) params[key] = decodeURIComponent(value.replace(/\+/g," "));
+  });
+  return params;
+}
+
+const params = getQueryParams();
+const customMessage = params.message || "Yahan apna personal message daalein...";
+const yourName = params.name || "TUMHARA NAME";
+
+const slides = [document.getElementById('slide1'), document.getElementById('slide2'), document.getElementById('slide3')];
+let currentSlide = 0;
+
+function addSmallHearts(slideBgId){
+  const bg = document.getElementById(slideBgId);
+  for(let i=0;i<9;i++){
+    for(let j=0;j<20;j++){
+      const h = document.createElement('div');
+      h.className='bg-heart';
+      h.textContent='❤️';
+      bg.appendChild(h);
+    }
+  }
+}
+
+function animateImage(imageId){ document.getElementById(imageId).style.display='block'; }
+
+function typeWriter(text){
+  const el=document.getElementById('typewriter'); el.textContent="";
+  let i=0;
+  const interval=setInterval(()=>{
+    if(i<text.length){ el.textContent+=text[i]; i++; el.parentElement.scrollTop = el.parentElement.scrollHeight; }
+    else { clearInterval(interval); document.getElementById('slide3-sign').textContent = `-YOURS ${yourName}💗`; document.getElementById('slide3-sign').style.display='block'; stopHearts(); }
+  },50);
+}
+
+let heartIntervals=[];
+function createMovingHearts(count){
+  const slide3=document.getElementById('slide3'); const colors=['red','white'];
+  for(let i=0;i<count;i++){
+    const h=document.createElement('div'); h.className='heart'; h.textContent='❤️';
+    h.style.color = colors[Math.floor(Math.random()*2)];
+    h.style.left=Math.random()*100+'vw'; h.style.top=Math.random()*100+'vh';
+    h.style.fontSize=(20+Math.random()*30)+'px';
+    h.style.opacity=(0.5 + Math.random()*0.5);
+    slide3.appendChild(h);
+
+    let angle=Math.random()*2*Math.PI;
+    let speed=0.2 + Math.random()*0.3;
+    const interval=setInterval(()=>{
+      let x=parseFloat(h.style.left); let y=parseFloat(h.style.top);
+      x+=Math.cos(angle)*speed; y+=Math.sin(angle)*speed;
+      if(x<0 || x>100) angle = Math.PI - angle; if(y<0 || y>100) angle = -angle;
+      x=Math.max(0, Math.min(100, x)); y=Math.max(0, Math.min(100, y));
+      h.style.left=x+'vw'; h.style.top=y+'vh';
+    },40);
+    heartIntervals.push(interval);
+  }
+}
+function stopHearts(){ heartIntervals.forEach(i=>clearInterval(i)); heartIntervals = []; }
+
+addSmallHearts('slide1-bg'); addSmallHearts('slide2-bg'); animateImage('slide1-image');
+
+document.getElementById('slide1-open').addEventListener('click', ()=> nextSlide());
+document.getElementById('slide2-open').addEventListener('click', ()=> nextSlide());
+
+function nextSlide(){
+  slides[currentSlide].classList.add('hidden'); currentSlide++;
+  if(currentSlide<slides.length){
+    slides[currentSlide].classList.remove('hidden');
+    if(currentSlide===0) animateImage('slide1-image');
+    if(currentSlide===1) animateImage('slide2-image');
+    if(currentSlide===2){ createMovingHearts(50); typeWriter(customMessage); }
+  }
+}
+</script>
+
+</body>
+</html>
