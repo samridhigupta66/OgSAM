@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OgSAM Message Share</title>
+<script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
+</head>
+<body>
+<h2>Type your message:</h2>
+<textarea id="userMessage" rows="5" cols="40" placeholder="Type here..."></textarea>
+<br>
+<button id="generateLink">Generate Shareable Link</button>
+<p id="shareLink"></p>
+
+<script>
+  // Compress and encode
+  function encodeMessage(msg) {
+    return LZString.compressToEncodedURIComponent(msg);
+  }
+
+  // Decode message
+  function decodeMessage(encoded) {
+    return LZString.decompressFromEncodedURIComponent(encoded);
+  }
+
+  // Generate link button
+  document.getElementById('generateLink').addEventListener('click', () => {
+    const msg = document.getElementById('userMessage').value;
+    if(!msg) return alert("Please enter a message!");
+    
+    const encoded = encodeMessage(msg);
+    const link = `${window.location.origin}${window.location.pathname}?msg=${encoded}`;
+    
+    const linkElement = document.getElementById('shareLink');
+    linkElement.innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+  });
+
+  // On page load: check if URL has message
+  const params = new URLSearchParams(window.location.search);
+  const encodedMsg = params.get("msg");
+  if(encodedMsg) {
+    const message = decodeMessage(encodedMsg);
+    // Show message on page
+    const display = document.createElement('p');
+    display.textContent = "Shared message: " + message;
+    document.body.appendChild(display);
+  }
+</script>
+</body>
+</html>
