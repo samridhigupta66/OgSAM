@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heart Slides Generator</title>
+<style>
+body {font-family:sans-serif; padding:20px; background:#ffe6f0; text-align:center;}
+input, textarea {width:80%; padding:10px; margin:10px 0; font-size:16px; border-radius:5px; border:1px solid #ccc;}
+button {padding:10px 20px; font-size:16px; border:none; background:red; color:white; border-radius:5px; cursor:pointer;}
+a {display:block; margin-top:20px; color:blue; word-break:break-all;}
+h1 {color:#ff1493;}
+</style>
+</head>
+<body>
+
+<h1>Heart Slides Link Generator</h1>
+<p>Type your message and your name. Click "Generate Link".</p>
+
+<textarea id="userMessage" placeholder="Type your personal message here..." rows="6"></textarea>
+<br>
+<input type="text" id="userName" placeholder="Your Name">
+<br>
+<button id="generateLink">Generate Link</button>
+
+<a id="shareLink" href="" target="_blank"></a>
+
+<!-- LZ-string library for compression -->
+<script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
+<script>
+function encodeMessage(msg){ return LZString.compressToEncodedURIComponent(msg); }
+
+document.getElementById('generateLink').addEventListener('click', ()=>{
+    const message = document.getElementById('userMessage').value;
+    const name = document.getElementById('userName').value;
+    if(!message || !name){ alert("Please fill both fields!"); return; }
+
+    const encodedMsg = encodeMessage(message);
+    const encodedName = encodeMessage(name);
+
+    const baseURL = "heart-slides.html";
+    const fullURL = `${baseURL}?msg=${encodedMsg}&name=${encodedName}`;
+    
+    const linkEl = document.getElementById('shareLink');
+    linkEl.href = fullURL;
+    linkEl.textContent = "Your ready-to-share link: " + fullURL;
+});
+</script>
+
+</body>
+</html>
