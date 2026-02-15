@@ -58,8 +58,8 @@ function getQueryParams() {
 }
 
 const params = getQueryParams();
-const customMessage = params.message || "Yahan apna personal message daalein...";
-const yourName = params.name || "TUMHARA NAME";
+const customMessage = params.msg ? LZString.decompressFromEncodedURIComponent(params.msg) : "Yahan apna personal message daalein...";
+const yourName = params.name ? LZString.decompressFromEncodedURIComponent(params.name) : "TUMHARA NAME";
 
 const slides = [document.getElementById('slide1'), document.getElementById('slide2'), document.getElementById('slide3')];
 let currentSlide = 0;
