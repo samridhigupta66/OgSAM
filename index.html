@@ -25,17 +25,21 @@ h1 {color:#ff1493;}
 
 <a id="shareLink" href="" target="_blank"></a>
 
+<script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
 <script>
+function encodeMessage(msg){ return LZString.compressToEncodedURIComponent(msg); }
+function decodeMessage(encoded){ return LZString.decompressFromEncodedURIComponent(encoded); }
+
 document.getElementById('generateLink').addEventListener('click', ()=>{
-    const message = encodeURIComponent(document.getElementById('userMessage').value);
-    const name = encodeURIComponent(document.getElementById('userName').value);
-    if(!message || !name){
-        alert("Please fill both message and name!");
-        return;
-    }
-    // Heart Slides page filename
+    const message = document.getElementById('userMessage').value;
+    const name = document.getElementById('userName').value;
+    if(!message || !name){ alert("Please fill both message and name!"); return; }
+
+    const encodedMsg = encodeMessage(message);
+    const encodedName = encodeMessage(name);
     const baseURL = "heart-slides.html";
-    const fullURL = `${baseURL}?message=${message}&name=${name}`;
+    const fullURL = `${baseURL}?msg=${encodedMsg}&name=${encodedName}`;
+    
     const linkEl = document.getElementById('shareLink');
     linkEl.href = fullURL;
     linkEl.textContent = "Your ready-to-share link: " + fullURL;
