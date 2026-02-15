@@ -26,7 +26,7 @@ html, body {width:100%; height:100%; overflow:hidden; font-family:sans-serif;}
 <!-- Slide 1 -->
 <div class="slide" id="slide1" style="background-color:#ffe6f0;">
   <div class="slide-bg" id="slide1-bg"></div>
-  <div class="text-box">HEY LOVE🥹❤</div>
+  <div class="text-box">HEY THERE🥹❤</div>
   <img src="gift.png" class="center-image" id="slide1-image">
   <div class="text-box open-box" id="slide1-open">open me👻</div>
 </div>
@@ -58,8 +58,8 @@ function getQueryParams() {
 }
 
 const params = getQueryParams();
-const customMessage = params.msg ? LZString.decompressFromEncodedURIComponent(params.msg) : "Yahan apna personal message daalein...";
-const yourName = params.name ? LZString.decompressFromEncodedURIComponent(params.name) : "TUMHARA NAME";
+const customMessage = params.message || "Yahan apna personal message daalein...";
+const yourName = params.name || "TUMHARA NAME";
 
 const slides = [document.getElementById('slide1'), document.getElementById('slide2'), document.getElementById('slide3')];
 let currentSlide = 0;
